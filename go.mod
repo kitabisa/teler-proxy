@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/charmbracelet/lipgloss v0.9.1
-	github.com/charmbracelet/log v0.2.4
+	github.com/charmbracelet/log v0.3.1
 	github.com/fsnotify/fsnotify v1.6.0
 	github.com/go-co-op/gocron v1.34.0
 	github.com/kitabisa/teler-waf v1.2.2
@@ -76,7 +76,7 @@ require (
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.26.0 // indirect
 	golang.org/x/crypto v0.14.0 // indirect
-	golang.org/x/exp v0.0.0-20230626212559-97b1e661b5df // indirect
+	golang.org/x/exp v0.0.0-20231006140011-7918f672742d // indirect
 	golang.org/x/net v0.17.0 // indirect
 	golang.org/x/oauth2 v0.10.0 // indirect
 	golang.org/x/sys v0.13.0 // indirect
