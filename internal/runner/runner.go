@@ -24,6 +24,7 @@ type Runner struct {
 	*common.Options
 	*cron.Cron
 	*http.Server
+	*Prometheus
 
 	shutdown  shutdown
 	telerOpts teler.Options
@@ -54,21 +55,41 @@ func New(opt *common.Options) error {
 		run.watcher.config = new(fsnotify.Watcher)
 	}
 
+	if opt.Port.Metrics > 0 {
+		if err := run.initMetrics(); err != nil {
+			opt.Logger.Error(errInitMetrics, "err", err)
+		}
+	}
+
 	dest := buildDest(opt.Destination)
 	writer := writer.New()
+	if run.Prometheus.Metrics != nil {
+		writer.Metrics = run.Prometheus.Metrics
+	}
 
 	tun, err := run.createTunnel(dest, writer)
 	if err != nil {
 		return err
 	}
 
+	handler := tun.ReverseProxy
+	// TODO(dwisisant0):
+	//   1. wrap Tunnel server
+	//   2. implement Prometheus.Registry in single metrics route
+	//   3. implement promMiddleware
+	// if run.Prometheus.Metrics != nil {
+	// 	handler = http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+	// 		promMiddleware(tun).ServeHTTP(w, req)
+	// 	})
+	// }
+
 	logger := log.StandardLog(log.StandardLogOptions{
 		ForceLevel: log.ErrorLevel,
 	})
 
 	server := &http.Server{
-		Addr:     fmt.Sprintf(":%d", opt.Port),
-		Handler:  tun,
+		Addr:     fmt.Sprintf(":%d", opt.Port.Server),
+		Handler:  handler,
 		ErrorLog: logger,
 	}
 
@@ -128,7 +149,7 @@ func (r *Runner) start() error {
 
 	r.Options.Logger.Info(
 		"Server started!",
-		"port", r.Options.Port,
+		"port", r.Options.Port.Server,
 		"tls", tls,
 		"pid", os.Getpid(),
 	)

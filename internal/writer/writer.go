@@ -5,6 +5,8 @@ import (
 
 	"github.com/charmbracelet/log"
 	"github.com/kitabisa/teler-proxy/internal/logger"
+	"github.com/kitabisa/teler-proxy/internal/metrics"
+	"github.com/prometheus/client_golang/prometheus"
 )
 
 type Writer interface {
@@ -13,6 +15,7 @@ type Writer interface {
 
 type logWriter struct {
 	*log.Logger
+	*metrics.Metrics
 }
 
 type data map[string]any
@@ -76,11 +79,24 @@ func (w *logWriter) writeInfo(d data) {
 }
 
 func (w *logWriter) writeWarn(d data, r []byte) {
-	w.Warn(d["msg"],
-		"id", d["id"],
-		"threat", d["category"],
-		"request", string(r),
-	)
+	var kv []interface{}
+
+	if d["category"] != nil {
+		if w.Metrics != nil {
+			w.Metrics.Events.With(prometheus.Labels{
+				"rule":   d["msg"].(string),
+				"threat": d["category"].(string),
+			})
+		}
+
+		kv = []interface{}{
+			"id", d["id"],
+			"threat", d["category"],
+			"request", string(r),
+		}
+	}
+
+	w.Warn(d["msg"], kv...)
 }
 
 func (w *logWriter) writeError(d data) {

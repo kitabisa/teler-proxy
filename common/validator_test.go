@@ -4,7 +4,7 @@ import "testing"
 
 func TestOptions_Validate_ValidConfig(t *testing.T) {
 	opt := &Options{
-		Port:        8080,
+		Port:        &Port{Server: 8080},
 		Destination: "example.com",
 		Config: &Config{
 			Path:   "config.yaml",
@@ -21,7 +21,7 @@ func TestOptions_Validate_ValidConfig(t *testing.T) {
 
 func TestOptions_Validate_EmptyDestination(t *testing.T) {
 	opt := &Options{
-		Port:        8080,
+		Port:        &Port{Server: 8080},
 		Destination: "",
 		Config: &Config{
 			Path:   "config.yaml",
@@ -38,7 +38,7 @@ func TestOptions_Validate_EmptyDestination(t *testing.T) {
 
 func TestOptions_Validate_InvalidConfigFormat(t *testing.T) {
 	opt := &Options{
-		Port:        8080,
+		Port:        &Port{Server: 8080},
 		Destination: "example.com",
 		Config: &Config{
 			Path:   "config.json",
@@ -55,7 +55,7 @@ func TestOptions_Validate_InvalidConfigFormat(t *testing.T) {
 
 func TestOptions_Validate_MissingConfigPathAndFormat(t *testing.T) {
 	opt := &Options{
-		Port:        8080,
+		Port:        &Port{Server: 8080},
 		Destination: "example.com",
 		Config:      &Config{},
 		TLS:         nil,

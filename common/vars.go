@@ -21,6 +21,7 @@ Options:
   -d, --dest <ADDR>:<PORT>     Set the destination address for forwarding requests
   -c, --conf <FILE>            Specify the path to the teler WAF configuration file
   -f, --format <FORMAT>        Specify the configuration file format (json/yaml) (default: yaml)
+      --metrics-port <PORT>    Specify the port for exposing metrics data
       --cert <FILE>            Specify the path to the SSL certificate file
       --key <FILE>             Specify the path to the SSL private key file
   -V, --version                Display the current teler-proxy version
